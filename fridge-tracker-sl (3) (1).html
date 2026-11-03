@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moj hladilnik</title>
+<style>
+:root{--bg:#f3f7f5;--card:#ffffff;--text:#18332b;--muted:#5d7169;--line:#dce7e1;--accent:#176b52;--accent-t:#ffffff;--red:#a92f35;--red-bg:#fbeaec;--amb:#875000;--amb-bg:#fff2d8;--ok:#176b52;--ok-bg:#e3f3eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121d19;--card:#1c2b25;--text:#e8f2ec;--muted:#a6b8ae;--line:#34483e;--accent:#65c49a;--accent-t:#10231a;--red:#ff9698;--red-bg:#42272b;--amb:#ffd078;--amb-bg:#453719;--ok:#75d3a7;--ok-bg:#1d3a2d}}
+:root[data-theme="dark"]{--bg:#121d19;--card:#1c2b25;--text:#e8f2ec;--muted:#a6b8ae;--line:#34483e;--accent:#65c49a;--accent-t:#10231a;--red:#ff9698;--red-bg:#42272b;--amb:#ffd078;--amb-bg:#453719;--ok:#75d3a7;--ok-bg:#1d3a2d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:680px;margin:0 auto;padding:24px 18px 52px}
+h1{letter-spacing:-.5px}
+.card{box-shadow:0 3px 14px rgba(26,65,48,.045)}
+.tabs{box-shadow:0 2px 8px rgba(26,65,48,.035)}
+.item{gap:12px}
+.item .n{font-weight:550}
+.empty{line-height:1.6}
+@media (max-width:420px){main{padding:18px 13px 40px}.card{padding:12px}.pill{font-size:12px;padding:4px 8px}}
+h1{font-size:26px;margin:4px 0 2px}
+h2{font-size:18px;margin:28px 0 10px}
+.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.add{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(150px,.9fr) minmax(150px,.9fr) auto;gap:8px;align-items:end}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:13px;font-weight:650;color:var(--muted)}
+select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);min-width:0;width:100%}
+select:focus-visible{outline:3px solid #83c9aa;outline-offset:2px}
+.table-wrap{overflow-x:auto;width:100%}.food-table{width:100%;border-collapse:collapse;font-size:14px}.food-table th{text-align:left;color:var(--muted);font-size:12px;font-weight:700;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}.food-table td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}.food-table tr:last-child td{border-bottom:0}.food-table td:first-child{font-weight:600;overflow-wrap:anywhere}.food-table .date{color:var(--muted);white-space:nowrap}.food-table .action{text-align:right;white-space:nowrap}.category-block+.category-block{margin-top:14px}.category-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px;font-size:16px}.category-count{font-size:12px;color:var(--muted);font-weight:500}
+@media (max-width:620px){.add{grid-template-columns:1fr 1fr}.field:first-child{grid-column:1/3}.add button{grid-column:1/3}.food-table{min-width:470px}}
+input{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);min-width:0}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:var(--accent-t);font-weight:600}
+button{transition:background .18s ease,transform .12s ease}button:not(.ghost):hover{filter:brightness(.94)}button:active{transform:translateY(1px)}button:focus-visible,input:focus-visible{outline:3px solid #83c9aa;outline-offset:2px}input:focus{border-color:var(--accent)}
+button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:500;padding:6px 10px;font-size:14px}
+.alert{border-radius:12px;padding:12px 14px;margin:16px 0 0;background:var(--amb-bg);color:var(--amb);font-weight:600}
+.alert.bad{background:var(--red-bg);color:var(--red)}
+.item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .n{flex:1;min-width:0;overflow-wrap:anywhere}
+.item .d{font-size:13px;color:var(--muted)}
+.pill{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.soon{background:var(--amb-bg);color:var(--amb)}.pill.bad{background:var(--red-bg);color:var(--red)}
+.recipe{padding:12px 0;border-bottom:1px solid var(--line)}
+.recipe:last-child{border-bottom:0}
+.recipe b{font-size:16px}
+.recipe .u{font-size:14px;margin-top:2px}
+.recipe .m{font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:12px;font-weight:700;background:var(--amb-bg);color:var(--amb);border-radius:6px;padding:1px 7px;margin-left:6px}
+.tabs{display:flex;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;background:transparent;color:var(--muted);font-weight:600}
+.tabs button.on{background:var(--accent);color:var(--accent-t)}
+[hidden]{display:none!important}
+.empty{color:var(--muted);text-align:center;padding:18px 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+
+/* Kuharska zbirka */
+.recipe-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.recipe-card{overflow:hidden;border:1px solid var(--line);border-radius:15px;background:var(--card);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease;min-width:0}
+.recipe-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,65,48,.10)}
+.recipe-card:focus-visible{outline:3px solid #83c9aa;outline-offset:3px}
+.recipe-card img{display:block;width:100%;height:150px;object-fit:cover;background:var(--line)}
+.recipe-card-body{padding:12px}
+.recipe-card h3{font-size:16px;line-height:1.3;margin:0 0 6px}
+.recipe-meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+.recipe-card .available{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.4}
+.recipe-card .tag{margin:8px 0 0}
+.recipe-detail-top{display:flex;align-items:center;gap:10px;margin:2px 0 14px}
+.recipe-detail-top button{flex-shrink:0}
+.recipe-detail-hero{width:100%;height:260px;object-fit:cover;border-radius:15px;background:var(--line);display:block}
+.recipe-detail h2{margin:22px 0 10px}
+.recipe-detail h1{font-size:25px;margin:0 0 8px}
+.recipe-detail .intro{color:var(--muted);margin:0 0 12px}
+.detail-meta{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.detail-chip{background:var(--ok-bg);color:var(--ok);padding:6px 10px;border-radius:999px;font-size:13px;font-weight:650}
+.ingredients{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ingredients li{padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:14px;background:var(--bg)}
+.steps{padding-left:22px;margin:0}
+.steps li{padding:0 0 12px 5px;line-height:1.55}
+.steps li::marker{font-weight:750;color:var(--accent)}
+.photo-credit{font-size:11px;color:var(--muted);margin-top:7px}
+.photo-credit a{color:inherit}
+@media(max-width:520px){.recipe-grid{grid-template-columns:1fr}.recipe-card{display:grid;grid-template-columns:112px 1fr;min-height:118px}.recipe-card img{height:100%;min-height:118px}.recipe-card-body{padding:10px}.recipe-detail-hero{height:210px}.ingredients{grid-template-columns:1fr}}
+
+
+/* Nadzorna plošča */
+.dashboard{display:grid;gap:14px;margin:18px 0 22px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stat-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;min-width:0;box-shadow:0 3px 14px rgba(26,65,48,.045)}
+.stat-icon{font-size:20px;line-height:1.2}
+.stat-number{font-size:25px;font-weight:800;letter-spacing:-.7px;line-height:1.2;margin-top:8px}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.3}
+.daily-recipe{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:var(--card);box-shadow:0 5px 18px rgba(26,65,48,.06)}
+.daily-recipe-media{position:relative;height:220px;background:linear-gradient(135deg,#dceee4,#f8eee0);overflow:hidden}
+.daily-recipe-media img{width:100%;height:100%;display:block;object-fit:cover}
+.daily-recipe-label{position:absolute;top:13px;left:13px;background:rgba(255,255,255,.94);color:#176b52;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.daily-recipe-body{padding:16px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.daily-recipe-copy{min-width:0}
+.daily-recipe-copy h3{font-size:20px;line-height:1.25;margin:0 0 5px}
+.daily-recipe-copy p{font-size:13px;color:var(--muted);margin:0}
+.daily-recipe-action{flex-shrink:0}
+.daily-recipe-action button{white-space:nowrap}
+.section-kicker{font-size:12px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.stat-card.soon .stat-number{color:var(--amb)}
+.stat-card.expired .stat-number{color:var(--red)}
+@media(max-width:560px){.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.daily-recipe-media{height:185px}.daily-recipe-body{align-items:flex-start;flex-direction:column}.daily-recipe-action,.daily-recipe-action button{width:100%}}
+
+</style>
+</head>
+<body>
+<main>
+  <h1>🧊 Moj hladilnik</h1>
+  <p class="sub">Dodaj živila v hladilnik, spremljaj rok uporabe in odkrij, kaj lahko skuhaš iz sestavin, ki jih že imaš.</p>
+
+  <div class="tabs">
+    <button id="tabFridge" class="on">🧊 Hladilnik</button>
+    <button id="tabCook">🍳 Kaj skuhati? <span id="cnt"></span></button>
+  </div>
+
+  <section id="vFridge">
+  <section class="dashboard" aria-label="Pregled hladilnika">
+    <div>
+      <p class="section-kicker">Tvoj pregled</p>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-icon">🧊</div><div class="stat-number" id="statTotal">0</div><div class="stat-label">Vseh živil</div></div>
+        <div class="stat-card soon"><div class="stat-icon">⏰</div><div class="stat-number" id="statSoon">0</div><div class="stat-label">Kmalu potečejo</div></div>
+        <div class="stat-card expired"><div class="stat-icon">⚠️</div><div class="stat-number" id="statExpired">0</div><div class="stat-label">Rok je potekel</div></div>
+        <div class="stat-card"><div class="stat-icon">🗂️</div><div class="stat-number" id="statCategories">0</div><div class="stat-label">Aktivnih skupin</div></div>
+      </div>
+    </div>
+    <div>
+      <p class="section-kicker">Današnji navdih</p>
+      <article class="daily-recipe" id="dailyRecipe">
+        <div class="daily-recipe-media"><img id="dailyRecipeImage" src="" alt="Recept dneva" loading="lazy"><span class="daily-recipe-label">⭐ RECEPT DNEVA</span></div>
+        <div class="daily-recipe-body">
+          <div class="daily-recipe-copy"><h3 id="dailyRecipeName">Izbiramo recept ...</h3><p id="dailyRecipeMeta">Ideja za naslednji obrok</p></div>
+          <div class="daily-recipe-action"><button id="dailyRecipeBtn">Poglej recept →</button></div>
+        </div>
+      </article>
+    </div>
+  </section>
+  <div class="card">
+    <div class="add">
+      <div class="field"><label for="name">Ime živila</label><input id="name" placeholder="npr. mleko, špinača, piščanec" autocomplete="off"></div>
+      <div class="field"><label for="category">Skupina živil</label><select id="category"><option value="auto">Samodejno določi</option><option value="mlecni">Mlečni izdelki</option><option value="testenine">Testenine in žita</option><option value="meso">Meso in ribe</option><option value="sadje">Sadje in zelenjava</option><option value="jajca">Jajca</option><option value="konzerve">Konzervirana živila</option><option value="ostalo">Ostalo</option></select></div>
+      <div class="field"><label for="exp">Rok uporabe</label><input id="exp" type="date" aria-label="Rok uporabe"></div>
+      <button id="addBtn">Dodaj živilo</button>
+    </div>
+  </div>
+
+  <div id="alerts"></div>
+
+  <h2>Živila po skupinah</h2>
+  <div id="list"></div>
+  </section>
+
+  <section id="vCook" hidden>
+    <h2 style="margin-top:4px">Kaj lahko pripraviš?</h2>
+    <p class="sub">Izberi jed za sestavine, ki jih imaš doma. Recepti z živili, ki jim rok kmalu poteče, so posebej označeni.</p>
+    <div id="recipes" class="recipe-grid"></div>
+  </section>
+
+  <section id="vRecipeDetail" class="recipe-detail" hidden>
+    <div class="recipe-detail-top"><button class="ghost" id="backRecipes">← Nazaj na recepte</button></div>
+    <div id="recipeDetailContent"></div>
+  </section>
+
+  <div class="row">
+    <button class="ghost" id="notifBtn">🔔 Vklopi obvestila</button>
+    <button class="ghost" id="demoBtn">Dodaj vzorčna živila</button>
+  </div>
+  <p class="sub" style="text-align:center;font-size:13px;margin-top:12px">Obvestila se prikazujejo, ko je stran odprta. Seznam se shrani v tem brskalniku.</p>
+</main>
+
+<script>
+(function(){
+  var KEY='fridge:items';
+  var items=[];
+  try{items=JSON.parse(localStorage.getItem(KEY)||'[]')||[];}catch(e){items=[];}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(items));}catch(e){}}
+  function $(id){return document.getElementById(id);}
+  function iso(d){var m=d.getMonth()+1,day=d.getDate();return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day;}
+  function addDays(n){var d=new Date();d.setDate(d.getDate()+n);return iso(d);}
+  function daysLeft(s){var t=new Date();t.setHours(0,0,0,0);var e=new Date(s+'T00:00:00');return Math.round((e-t)/86400000);}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function label(d){if(d<0)return 'Preteklo pred '+(-d)+' d';if(d===0)return 'Poteče danes';if(d===1)return 'Še 1 dan';return 'Še '+d+' dni';}
+  function formatDate(s){var p=s.split('-');var d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2]));return new Intl.DateTimeFormat('sl-SI',{day:'numeric',month:'short',year:'numeric'}).format(d);}
+  function cls(d){return d<0?'bad':d<=3?'soon':'ok';}
+  function servingLabel(n){return n===1?'porcija':(n>=2&&n<=4?'porcije':'porcij');}
+
+  var RECIPES=[
+    {n:'Zelenjavna omleta',k:['jajce','sir','špinača','gobe','čebula','paprika','šunka','paradižnik'],m:'10 min',t:'Vse sestavine nareži na majhne koščke in jih vmešaj v stepena jajca.'},
+    {n:'Fritata',k:['jajce','krompir','čebula','paprika','sir','špinača','bučke','šunka'],m:'25 min',t:'Odlična jed za porabo ostankov. Na koncu jo dokončaj v pečici.'},
+    {n:'Pražena zelenjava',k:['paprika','korenje','brokoli','čebula','bučke','zelje','gobe','riž','sojina omaka'],m:'15 min',t:'Na hitro prepraži na visoki temperaturi in postrezi z rižem.'},
+    {n:'Pražen riž s piščancem',k:['piščanec','riž','jajce','korenje','čebula','grah'],m:'20 min',t:'Najboljši je riž, ki je skuhan že prejšnji dan.'},
+    {n:'Palačinke',k:['mleko','jajce','moka','maslo'],m:'20 min',t:'Uporabi mleko, ki se mu bliža rok uporabe.'},
+    {n:'Opečene kruhove rezine',k:['kruh','jajce','mleko','maslo'],m:'10 min',t:'Odlična izbira za nekoliko star kruh.'},
+    {n:'Sadni smuti',k:['banana','jagodičevje','jogurt','mleko','jabolko','mango','špinača'],m:'5 min',t:'V mešalniku zmešaj mehko ali zelo zrelo sadje.'},
+    {n:'Bananin kruh',k:['banana','jajce','moka','maslo','mleko'],m:'1 ura',t:'Odličen način za porabo zelo zrelih banan.'},
+    {n:'Jogurtova skleda s sadjem',k:['jogurt','jagodičevje','jabolko','banana','granola'],m:'5 min',t:'Po plasteh dodaj sadje in jogurt. Preprosto in hitro.'},
+    {n:'Kremne testenine',k:['testenine','smetana','sir','mleko','gobe','špinača','piščanec','brokoli'],m:'20 min',t:'Ostanke smetane ali sira vmešaj v omako.'},
+    {n:'Zelenjavna juha',k:['korenje','krompir','čebula','zelena','zelje','bučke','paradižnik','brokoli','paprika'],m:'30 min',t:'Kuhaj v jušni osnovi; po želji juho tudi zmiksaj.'},
+    {n:'Tortilje s sirom',k:['tortilja','sir','piščanec','paprika','čebula','fižol','šunka'],m:'10 min',t:'Popeci jih, da postanejo hrustljave in zlato rjave.'},
+    {n:'Opečen kruh s sirom',k:['kruh','sir','šunka','paradižnik'],m:'10 min',t:'Dodaj šunko ali rezine paradižnika.'},
+    {n:'Solata caprese',k:['paradižnik','mocarela','bazilika','kumara','sir'],m:'5 min',t:'Najboljša je s svežim, zrelim paradižnikom.'}
+  ];
+
+  // Podrobna navodila in fotografije. Fotografije se nalagajo iz navedenih spletnih virov.
+  var RECIPE_DETAILS={
+    'Zelenjavna omleta':{img:'https://www.gutekueche.at/storage/media/recipe/166531/gemueseomelette.jpg',photo:'Gute Küche',source:'https://www.gutekueche.at/gemueseomelette-rezept-6174',serves:2,ingredients:['4 jajca','1/2 rdeče paprike','1/2 bučke','1 manjša čebula','1 manjši paradižnik','40 g naribanega sira','1 žlica olja','Sol in poper'],steps:['Zelenjavo operi. Papriko, bučko, čebulo in paradižnik nareži na majhne koščke.','V skledi razžvrkljaj jajca ter dodaj sol in poper.','V ponvi segrej olje. Najprej 2–3 minute praži čebulo, nato dodaj papriko in bučko.','Dodaj paradižnik in praži še približno 2 minuti.','Zelenjavo enakomerno razporedi po ponvi in prelij z jajci. Peci na zmernem ognju, da jajca zakrknejo.','Potresemo s sirom, omleto prepogni in postrezi toplo.']},
+    'Fritata':{img:'https://www.gutekueche.at/storage/media/recipe/166531/gemueseomelette.jpg',photo:'Gute Küche',source:'https://www.gutekueche.at/gemueseomelette-rezept-6174',serves:2,ingredients:['4 jajca','1 srednje velik krompir','1/2 paprike','1/2 čebule','50 g sira','1 žlica olja','Sol, poper in zelišča'],steps:['Krompir olupi in nareži na majhne kocke. Skuhaj ga 7–8 minut v slani vodi, da se nekoliko zmehča.','Čebulo in papriko nareži. V ponvi segrej olje in ju na kratko prepraži.','Dodaj odcejen krompir. Jajca razžvrkljaj s soljo, poprom in zelišči ter jih prelij čez zelenjavo.','Peci na nizkem ognju 5–7 minut, da se spodnji del strdi.','Potresemo s sirom in ponev za nekaj minut postavi pod žar v pečici, če je primerna za uporabo v pečici. Sicer pokrij s pokrovko in peci, da se vrh strdi.']},
+    'Pražena zelenjava':{img:'https://mccormick.widen.net/content/d6oqd1m7en/jpeg/stir-fry-vegetables-recipe-1376x774.jpeg',photo:'McCormick',source:'https://www.mccormick.com/blogs/recipes/vegetable-stir-fry',serves:2,ingredients:['1 korenček','1/2 brokolija','1 paprika','1/2 bučke','1/2 čebule','1 žlica olja','2 žlici sojine omake','1 strok česna','Kuhan riž za prilogo'],steps:['Zelenjavo operi in nareži na približno enako velike koščke. Česen drobno sesekljaj.','V večji ponvi ali voku segrej olje. Dodaj korenček in brokoli ter praži 3 minute.','Dodaj papriko, bučko in čebulo. Med mešanjem praži še 3–4 minute, da zelenjava ostane rahlo hrustljava.','Vmešaj česen in sojino omako. Praži še približno minuto.','Postrezi samostojno ali s kuhanim rižem.']},
+    'Pražen riž s piščancem':{img:'https://images.deliveryhero.io/image/global-menu-service/GV_BA/vendor/881886/PRODUCT/0c009386-6284-46d9-8c2d-1ac735406661.jpg',photo:'Glovo / Mr. Lee',source:'https://glovoapp.com/en/ba/sarajevo/stores/mr-lee-srv',serves:2,ingredients:['250 g kuhanega in ohlajenega riža','200 g piščančjih prsi','1 jajce','1 korenček','50 g graha','1/2 čebule','1–2 žlici sojine omake','1 žlica olja'],steps:['Piščanca nareži na majhne kocke. Korenček in čebulo drobno nareži.','V ponvi segrej olje in piščanca dobro popeci, da je v sredini povsem pečen. Preloži ga na krožnik.','V isti ponvi prepraži čebulo, korenček in grah.','Zelenjavo pomakni na rob ponve. Na sredino ubij jajce in ga med mešanjem zakrknjeno razdrobi.','Dodaj kuhan riž in piščanca. Prilij sojino omako ter vse skupaj praži 3–4 minute.']},
+    'Palačinke':{img:'https://dianashealthyliving.com/wp-content/uploads/2025/10/palacinke-recipe.jpg.webp',photo:'Diana’s Healthy Living',source:'https://dianashealthyliving.com/croatian-palacinke-recipe/',serves:2,ingredients:['2 jajci','250 ml mleka','125 g gladke moke','1 žlica olja','Ščepec soli','Po želji: marmelada, čokoladni namaz ali sladkor'],steps:['V skledi zmešaj jajci, mleko, moko in sol. Mešaj, da dobiš gladko maso brez grudic.','Maso pusti počivati približno 10 minut. Če je pregosta, dodaj malo mleka.','Ponev rahlo namasti in jo dobro segrej.','Vlij manjšo zajemalko mase in ponev zavrti, da se masa enakomerno razporedi.','Palačinko peci približno minuto, obrni in peci še 30–60 sekund.','Ponovi s preostalo maso in palačinke postrezi z izbranim nadevom.']},
+    'Opečene kruhove rezine':{img:'https://dianashealthyliving.com/wp-content/uploads/2025/10/palacinke-recipe.jpg.webp',photo:'Diana’s Healthy Living (ilustrativna fotografija)',source:'https://dianashealthyliving.com/croatian-palacinke-recipe/',serves:2,ingredients:['4 rezine kruha','1 jajce','80 ml mleka','1/2 žličke cimeta (po želji)','1 žlička masla','Po želji: sladkor ali sadje'],steps:['V plitvi posodi z vilicami zmešaj jajce in mleko. Po želji dodaj cimet.','Rezine kruha na hitro pomoči v jajčno-mlečno zmes z obeh strani. Ne namakaj jih predolgo, da ne razpadejo.','V ponvi stopi maslo na srednji temperaturi.','Kruh peci 2–3 minute na vsaki strani, da postane zlato rjav.','Postrezi topel, po želji s sadjem ali malo sladkorja.']},
+    'Sadni smuti':{img:'https://s3-media0.fl.yelpcdn.com/bphoto/7ni2IiB3NNlNOnrPYQZQlQ/l.jpg',photo:'Juicy’s Wellness Cafe',source:'https://www.mapquest.com/us/tennessee/juicys-wellness-cafe-of-murfreesboro-422594786',serves:2,ingredients:['1 banana','150 g jagodičevja ali drugega sadja','150 g navadnega jogurta','150 ml mleka','1 žlička medu (po želji)','Nekaj kock ledu'],steps:['Sadje operi in po potrebi nareži na manjše koščke.','V mešalnik dodaj banano, jagodičevje, jogurt in mleko.','Po želji dodaj med in nekaj kock ledu.','Mešaj 30–60 sekund, da nastane gladek napitek.','Poskusi in po potrebi dodaj še malo mleka. Postrezi takoj.']},
+    'Bananin kruh':{img:'https://www.lindenkeller-freising.de/site/assets/files/1649/4i6unukrj.1500x1125.jpg',photo:'Lindenkeller Freising (ilustrativna fotografija)',source:'https://www.lindenkeller-freising.de/essen-und-trinken/fruehstueck-und-brunch/',serves:8,ingredients:['3 zelo zrele banane','2 jajci','200 g moke','80 g stopljenega masla','80 g sladkorja','1 žlička pecilnega praška','Ščepec soli'],steps:['Pečico segrej na 180 °C. Podolgovat pekač obloži s papirjem za peko.','Banane z vilicami pretlači v pire.','Vmešaj jajci, stopljeno maslo in sladkor.','Dodaj moko, pecilni prašek in sol. Premešaj samo toliko, da se sestavine povežejo.','Maso prelij v pekač in peci 45–55 minut. Z zobotrebcem preveri, ali je sredina pečena.','Kruh pred rezanjem nekoliko ohladi.']},
+    'Jogurtova skleda s sadjem':{img:'https://s3-media0.fl.yelpcdn.com/bphoto/7ni2IiB3NNlNOnrPYQZQlQ/l.jpg',photo:'Juicy’s Wellness Cafe',source:'https://www.mapquest.com/us/tennessee/juicys-wellness-cafe-of-murfreesboro-422594786',serves:2,ingredients:['300 g navadnega ali grškega jogurta','1 banana','100 g jagodičevja','1 jabolko','4 žlice granole ali ovsenih kosmičev','1 žlička medu (po želji)'],steps:['Sadje operi. Banano nareži na kolute, jabolko pa na majhne koščke.','Jogurt razdeli v dve skledi.','Po vrhu razporedi narezano sadje.','Dodaj granolo ali ovsene kosmiče.','Po želji pokapaj z medom in postrezi takoj, da granola ostane hrustljava.']},
+    'Kremne testenine':{img:'https://odprtakuhinja.delo.si/media/images/20231025/1545308.max-1280x1280.jpg',photo:'Odprta kuhinja',source:'https://odprtakuhinja.delo.si/recepti/kremaste-testenine-iz-enega-lonca-ki-bodo-pogosto-na-mizi',serves:2,ingredients:['200 g testenin','150 ml smetane za kuhanje','1 strok česna','100 g gob ali špinače','50 g naribanega sira','1 žlica olja ali masla','Sol in poper'],steps:['Testenine skuhaj v osoljeni vodi po navodilih na embalaži. Pred odcejanjem prihrani nekaj žlic vode od kuhanja.','V ponvi segrej olje ali maslo. Dodaj sesekljan česen in ga na kratko popraži.','Dodaj narezane gobe ali špinačo in praži, dokler se ne zmehčajo.','Prilij smetano, dodaj sol in poper ter nežno segrej.','V omako vmešaj testenine in nariban sir. Po potrebi dodaj malo vode od kuhanja, da postane omaka svilnata.']},
+    'Zelenjavna juha':{img:'https://realfood.tesco.com/media/images/1400x919-TomatoSoupQuesadillas-afd029e6-21e7-42b1-bd12-c56b1ef9a45b-0-1400x919.jpg',photo:'Tesco Real Food (fotografija juhe)',source:'https://realfood.tesco.com/recipes/spiced-tomato-soup-with-bean-quesadillas.html',serves:3,ingredients:['1 korenček','1 krompir','1/2 čebule','1/2 bučke','1 paradižnik','700 ml zelenjavne jušne osnove ali vode','1 žlica olja','Sol, poper in peteršilj'],steps:['Vso zelenjavo operi, po potrebi olupi in nareži na kocke.','V loncu segrej olje in na njem 2 minuti praži čebulo.','Dodaj korenček, krompir, bučko in paradižnik. Premešaj.','Prilij jušno osnovo ali vodo. Zavri, nato kuhaj na zmernem ognju 20–25 minut, da se zelenjava zmehča.','Začini s soljo in poprom. Juho lahko pustiš takšno ali jo delno oziroma povsem zmiksaš.','Pred serviranjem potresi s peteršiljem.']},
+    'Tortilje s sirom':{img:'https://www.fuersie.de/images/1x1/2025-09/avocado-quesadillas.jpg',photo:'Für Sie',source:'https://www.fuersie.de/kochen-backen/avocado-quesadillas-rezept-19020.html',serves:2,ingredients:['2 veliki tortilji','100 g naribanega sira','1/2 paprike','1/2 čebule','100 g kuhanega piščanca ali fižola (po želji)','1 žlička olja'],steps:['Papriko in čebulo nareži na tanke trakove.','Na polovico vsake tortilje razporedi sir, zelenjavo in po želji piščanca ali fižol.','Tortiljo prepogni na polovico.','V ponvi segrej malo olja in tortiljo peci 2–3 minute na vsaki strani, da se sir stopi, zunanjost pa zlato zapeče.','Nareži na trikotnike in postrezi toplo.']},
+    'Opečen kruh s sirom':{img:'https://d2aq0yf1s46hyj.cloudfront.net/therandomrecipe/1.png',photo:'The Random Recipe',source:'https://www.therandomrecipe.com/foods/classic-grilled-cheese-sandwich',serves:2,ingredients:['4 rezine kruha','4 rezine sira','2 rezini šunke (po želji)','1 paradižnik (po želji)','Malo masla'],steps:['Na dve rezini kruha položi sir, po želji šunko in rezine paradižnika. Pokrij s preostalima rezinama.','Zunanjost kruha rahlo namaži z maslom.','Sendviča peci v ponvi na srednje nizkem ognju 2–3 minute na vsaki strani.','Obrni ju, ko je spodnja stran zlato rjava. Peci, dokler se sir ne stopi.','Prereži na polovico in postrezi toplo.']},
+    'Solata caprese':{img:'https://cdn.stoneline.de/media/91/24/00/1772179903/Frischer-Tomaten-Mozzarella-Salat.jpg?ts=1772179903',photo:'Stoneline',source:'https://www.stoneline.de/fr/recette/salade-fraiche-de-tomates-et-mozzarella-caprese-avec-pain-blanc-maison',serves:2,ingredients:['2 zrela paradižnika','125 g mocarele','Nekaj listov sveže bazilike','1 žlica olivnega olja','1 žlička balzamičnega kisa (po želji)','Sol in sveže mlet poper'],steps:['Paradižnik operi in nareži na rezine.','Mocarelo odcedi in nareži na podobno debele rezine.','Na krožniku izmenično razporedi paradižnik in mocarelo.','Dodaj liste bazilike.','Pokapaj z olivnim oljem in po želji z balzamičnim kisom. Začini s soljo in poprom ter takoj postrezi.']}
+  };
+
+  var ALIASES={'jajce':['egg','jajca','jajci'],'sir':['cheese','cheddar'],'špinača':['spinach'],'gobe':['goba','mushroom','champignon'],'čebula':['onion'],'paprika':['pepper'],'šunka':['ham'],'paradižnik':['tomato'],'krompir':['potato'],'bučke':['bučka','zucchini'],'korenje':['carrot'],'brokoli':['broccoli'],'zelje':['cabbage'],'riž':['rice'],'sojina omaka':['soy','soy sauce'],'piščanec':['chicken','piščančje','piščančje meso'],'grah':['pea','peas'],'mleko':['milk'],'moka':['flour'],'maslo':['butter'],'kruh':['bread'],'banana':['bananas','banane'],'jagodičevje':['berry','berries','jagode','maline','borovnice'],'jogurt':['yogurt'],'jabolko':['apple','jabolka'],'granola':['kosmiči'],'testenine':['pasta'],'smetana':['cream'],'zelena':['celery'],'tortilja':['tortilla'],'fižol':['bean','beans'],'mocarela':['mozzarella'],'bazilika':['basil'],'kumara':['cucumber']};
+  function has(it,kw){var name=it.name.toLowerCase();if(name.indexOf(kw)>-1)return true;return (ALIASES[kw]||[]).some(function(alias){return name.indexOf(alias)>-1;});}
+
+  var CATEGORIES=[
+    {id:'mlecni',name:'Mlečni izdelki',icon:'🥛'},
+    {id:'testenine',name:'Testenine in žita',icon:'🍝'},
+    {id:'meso',name:'Meso in ribe',icon:'🥩'},
+    {id:'sadje',name:'Sadje in zelenjava',icon:'🥦'},
+    {id:'jajca',name:'Jajca',icon:'🥚'},
+    {id:'konzerve',name:'Konzervirana živila',icon:'🥫'},
+    {id:'ostalo',name:'Ostalo',icon:'📦'}
+  ];
+  function guessCategory(name){
+    var n=name.toLowerCase();
+    if(/mleko|milk|jogurt|yogurt|sir|cheese|skuta|smetana|cream|maslo|butter|mocarela|mozzarella/.test(n))return 'mlecni';
+    if(/testenin|pasta|špaget|spaget|riž|riz|moka|flour|kosmič|granola|ovseni/.test(n))return 'testenine';
+    if(/meso|piščan|piscan|goved|svinj|pur|šunka|sunka|salama|klobas|riba|losos|tuna|chicken|beef|pork|ham/.test(n))return 'meso';
+    if(/jajc|egg/.test(n))return 'jajca';
+    if(/konzerv|fižol|fizol|bean|grah|pea|koruza|tuna v/.test(n))return 'konzerve';
+    if(/jabol|banana|hrušk|hrusk|jagod|malin|borov|sadje|špinač|spinac|koren|brokoli|zelje|bučk|buc|paradiž|paradiz|paprik|čebul|cebul|krompir|kumara|solata|grozd|limon|pomaranč|pomaranc/.test(n))return 'sadje';
+    return 'ostalo';
+  }
+  var migrated=false;items.forEach(function(it){if(!it.category){it.category=guessCategory(it.name);migrated=true;}});if(migrated)save();
+
+  function renderDashboard(suggested){
+    var expired=items.filter(function(i){return daysLeft(i.exp)<0;});
+    var soon=items.filter(function(i){var d=daysLeft(i.exp);return d>=0&&d<=3;});
+    var categories={};
+    items.forEach(function(i){categories[i.category||guessCategory(i.name)]=true;});
+    $('statTotal').textContent=items.length;
+    $('statSoon').textContent=soon.length;
+    $('statExpired').textContent=expired.length;
+    $('statCategories').textContent=Object.keys(categories).length;
+
+    // Če je mogoče, izpostavi recept, ki najbolje porabi sestavine iz hladilnika.
+    // Če še ni dovolj sestavin, izberi stabilen dnevni predlog.
+    var chosen=suggested&&suggested.length?suggested[0].r:RECIPES[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0).getTime())/86400000)%RECIPES.length];
+    var detail=RECIPE_DETAILS[chosen.n]||{};
+    $('dailyRecipeName').textContent=chosen.n;
+    $('dailyRecipeMeta').textContent='⏱ '+chosen.m+'  ·  🍽 '+(detail.serves||2)+' porciji'+(suggested&&suggested.length?'  ·  Ustreza sestavinam doma':'');
+    var image=$('dailyRecipeImage');
+    image.src=detail.img||'';
+    image.alt='Fotografija jedi: '+chosen.n;
+    image.onerror=function(){this.style.display='none';};
+    image.onload=function(){this.style.display='block';};
+    $('dailyRecipeBtn').setAttribute('data-recipe',chosen.n);
+  }
+
+  function render(){
+    items.sort(function(a,b){return daysLeft(a.exp)-daysLeft(b.exp);});
+    var list=$('list');
+    if(!items.length){
+      list.innerHTML='<div class="card empty">Hladilnik je prazen. Dodaj živilo zgoraj ali preizkusi vzorčna živila spodaj.</div>';
+    }else{
+      list.innerHTML=CATEGORIES.map(function(cat){
+        var group=items.filter(function(it){return (it.category||guessCategory(it.name))===cat.id;});
+        if(!group.length)return '';
+        return '<section class="category-block"><h3 class="category-title"><span>'+cat.icon+' '+cat.name+'</span><span class="category-count">'+group.length+' '+(group.length===1?'živilo':(group.length>=2&&group.length<=4?'živila':'živil'))+'</span></h3>'+ 
+          '<div class="card table-wrap"><table class="food-table"><thead><tr><th>Živilo</th><th>Rok uporabe</th><th>Stanje</th><th></th></tr></thead><tbody>'+group.map(function(it){
+            var d=daysLeft(it.exp);
+            return '<tr><td>'+esc(it.name)+'</td><td class="date">'+formatDate(it.exp)+'</td><td><span class="pill '+cls(d)+'">'+label(d)+'</span></td><td class="action"><button class="ghost" data-id="'+esc(it.id)+'" title="Označi kot porabljeno">Porabljeno</button></td></tr>';
+          }).join('')+'</tbody></table></div></section>';
+      }).join('');
+    }
+
+    var exp=items.filter(function(i){return daysLeft(i.exp)<0;});
+    var soon=items.filter(function(i){var d=daysLeft(i.exp);return d>=0&&d<=3;});
+    var a='';
+    if(exp.length)a+='<div class="alert bad">⚠️ '+exp.length+' živilom je rok že potekel: '+exp.map(function(i){return esc(i.name);}).join(', ')+'. Pred uporabo preveri njihovo stanje.</div>';
+    if(soon.length)a+='<div class="alert">⏰ Kmalu porabi: '+soon.map(function(i){return esc(i.name)+' ('+label(daysLeft(i.exp)).toLowerCase()+')';}).join(', ')+'</div>';
+    $('alerts').innerHTML=a;
+
+    var urgent=items.filter(function(i){return daysLeft(i.exp)<=3&&daysLeft(i.exp)>=0;});
+    var usable=items.filter(function(i){return daysLeft(i.exp)>=0;});
+    var out=[];
+    RECIPES.forEach(function(r){
+      var have=[],miss=[],hot=[];
+      r.k.forEach(function(kw){
+        var m=usable.filter(function(i){return has(i,kw);});
+        if(m.length){have.push(kw);if(m.some(function(i){return urgent.indexOf(i)>-1;}))hot.push(kw);}
+        else miss.push(kw);
+      });
+      if(have.length>=2||(have.length===1&&hot.length===1&&r.k.length<=4)){
+        out.push({r:r,have:have,miss:miss,hot:hot,score:hot.length*10+have.length*2-miss.length*0.3});
+      }
+    });
+    out.sort(function(a,b){return b.score-a.score;});
+    renderDashboard(out);
+    window.fridgeSuggestedRecipes=out;
+    $('recipes').innerHTML=out.length?out.slice(0,14).map(function(o){
+      var d=RECIPE_DETAILS[o.r.n]||{};
+      var img=d.img||'';
+      return '<article class="recipe-card" role="button" tabindex="0" data-recipe="'+esc(o.r.n)+'" aria-label="Odpri recept '+esc(o.r.n)+'">'+
+        (img?'<img src="'+img+'" alt="Pripravljena jed: '+esc(o.r.n)+'" loading="lazy" onerror="this.remove()">':'')+
+        '<div class="recipe-card-body"><h3>'+esc(o.r.n)+'</h3><div class="recipe-meta"><span>⏱ '+esc(o.r.m)+'</span><span>🍽 '+(d.serves||2)+' porciji</span></div>'+
+        (o.hot.length?'<span class="tag">⏰ Porabi kmalu</span>':'')+
+        '<div class="available">Na voljo: '+esc(o.have.join(', '))+'</div>'+
+        (o.miss.length?'<div class="m">Manjka: '+esc(o.miss.slice(0,4).join(', '))+'</div>':'')+
+        '</div></article>';
+    }).join(''):'<div class="empty" style="grid-column:1/-1">Dodaj nekaj sestavin in predlagal ti bom, kaj lahko pripraviš.</div>';
+    var nHot=out.filter(function(o){return o.hot.length;}).length;
+    $('cnt').textContent=nHot?'('+nHot+')':'';
+  }
+
+  function add(name,exp,category){
+    name=(name||'').trim();
+    if(!name||!exp)return false;
+    items.push({id:Date.now()+Math.random().toString(16).slice(2,6),name:name,exp:exp,category:(!category||category==='auto')?guessCategory(name):category});
+    save();render();return true;
+  }
+
+  $('exp').value=addDays(5);
+  $('addBtn').onclick=function(){
+    if(add($('name').value,$('exp').value,$('category').value)){$('name').value='';$('category').value='auto';$('name').focus();}
+  };
+  $('name').addEventListener('keydown',function(e){if(e.key==='Enter')$('addBtn').click();});
+  $('list').addEventListener('click',function(e){
+    var id=e.target.getAttribute&&e.target.getAttribute('data-id');
+    if(!id)return;
+    items=items.filter(function(i){return i.id!==id;});save();render();
+  });
+  $('demoBtn').onclick=function(){
+    [['Mleko',1],['Špinača',2],['Jajca',9],['Sir',14],['Piščančje meso',2],['Banane',3],['Korenje',8],['Jogurt',-1]].forEach(function(p){add(p[0],addDays(p[1]));});
+  };
+
+  function notify(){
+    try{
+      if(!('Notification' in window)||Notification.permission!=='granted')return;
+      var urgent=items.filter(function(i){return daysLeft(i.exp)<=1;});
+      if(!urgent.length)return;
+      var today=iso(new Date());
+      if(localStorage.getItem('fridge:notified')===today)return;
+      localStorage.setItem('fridge:notified',today);
+      new Notification('Moj hladilnik',{body:urgent.map(function(i){return i.name;}).join(', ')+' – porabi danes ali jutri.'});
+    }catch(e){}
+  }
+  $('notifBtn').onclick=function(){
+    try{
+      if(!('Notification' in window)){alert('Ta brskalnik ne podpira obvestil. Opozorila na strani bodo še vedno delovala.');return;}
+      Notification.requestPermission().then(function(p){
+        $('notifBtn').textContent=p==='granted'?'🔔 Obvestila so vklopljena':'🔕 Obvestila so blokirana';notify();
+      });
+    }catch(e){alert('Obvestila tukaj niso na voljo. Opozorila na strani bodo še vedno delovala.');}
+  };
+  try{if('Notification' in window&&Notification.permission==='granted')$('notifBtn').textContent='🔔 Obvestila so vklopljena';}catch(e){}
+
+  function showTab(t){
+    var c=t==='cook';
+    $('vFridge').hidden=c;$('vCook').hidden=!c;
+    $('tabFridge').classList.toggle('on',!c);$('tabCook').classList.toggle('on',c);
+    try{history.replaceState(null,'',c?'#cook':location.pathname+location.search);}catch(e){}
+    window.scrollTo(0,0);
+  }
+  $('tabFridge').onclick=function(){showTab('fridge');$('vRecipeDetail').hidden=true;};
+  $('tabCook').onclick=function(){showTab('cook');$('vRecipeDetail').hidden=true;};
+
+  function openRecipe(name){
+    var recipe=RECIPES.find(function(r){return r.n===name;});
+    var d=RECIPE_DETAILS[name];
+    if(!recipe||!d)return;
+    $('vFridge').hidden=true;$('vCook').hidden=true;$('vRecipeDetail').hidden=false;
+    $('tabFridge').classList.remove('on');$('tabCook').classList.add('on');
+    var image=d.img?'<img class="recipe-detail-hero" src="'+d.img+'" alt="'+esc(name)+'" onerror="this.remove()">':'';
+    $('recipeDetailContent').innerHTML=image+
+      '<h1>'+esc(name)+'</h1><p class="intro">'+esc(recipe.t)+'</p>'+
+      '<div class="detail-meta"><span class="detail-chip">⏱ '+esc(recipe.m)+'</span><span class="detail-chip">🍽 '+d.serves+' '+servingLabel(d.serves)+'</span><span class="detail-chip">👨‍🍳 Preprosta priprava</span></div>'+
+      '<div class="card"><h2 style="margin-top:2px">Sestavine</h2><ul class="ingredients">'+d.ingredients.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>'+
+      '<h2>Postopek priprave</h2><ol class="steps">'+d.steps.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>'+
+      '<p class="photo-credit">Fotografija: <a href="'+d.source+'" target="_blank" rel="noopener noreferrer">'+esc(d.photo)+' – vir fotografije</a>. Fotografija je informativna; jed pripravi po navodilih recepta.</p>';
+    try{history.replaceState(null,'','#recept-'+encodeURIComponent(name));}catch(e){}
+    window.scrollTo(0,0);
+  }
+  $('dailyRecipeBtn').addEventListener('click',function(){var name=this.getAttribute('data-recipe');if(name)openRecipe(name);});
+  $('recipes').addEventListener('click',function(e){var card=e.target.closest('[data-recipe]');if(card)openRecipe(card.getAttribute('data-recipe'));});
+  $('recipes').addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-recipe]')){e.preventDefault();openRecipe(e.target.getAttribute('data-recipe'));}});
+  $('backRecipes').onclick=function(){ $('vRecipeDetail').hidden=true;showTab('cook');};
+
+  render();notify();
+  if(location.hash==='#cook')showTab('cook');
+  setInterval(function(){render();notify();},60000);
+})();
+</script>
+</body>
+</html>
